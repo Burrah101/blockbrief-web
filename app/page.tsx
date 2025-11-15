@@ -1,8 +1,45 @@
 "use client";
 
+import React, { useState } from "react";
 import { Shield, Zap, Database } from "lucide-react";
 
 export default function Page() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  async function handleSubscribe(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!email) return;
+
+    try {
+      setStatus("loading");
+      setMessage("");
+
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        setStatus("error");
+        setMessage(data?.message || "Something went wrong.");
+        return;
+      }
+
+      setStatus("success");
+      setMessage("You’re on the list. We’ll see you in tomorrow’s Brief. 💙");
+      setEmail("");
+    } catch (err) {
+      console.error(err);
+      setStatus("error");
+      setMessage("Something went wrong. Please try again.");
+    }
+  }
+
   return (
     <main className="min-h-screen w-full bg-[#030712] text-white">
       {/* HERO SECTION */}
@@ -22,8 +59,7 @@ export default function Page() {
             {/* Main Headline */}
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
               Crypto News, Alpha &amp; Insights <br />
-              from Builders{" "}
-              <span className="text-sky-400">Worldwide</span>
+              from Builders <span className="text-sky-400">Worldwide</span>
             </h1>
 
             {/* Subheadline */}
@@ -44,7 +80,7 @@ export default function Page() {
               </button>
             </div>
 
-            {/* EMAIL CAPTURE ROW */}
+            {/* EMAIL CAPTURE ROW (NOW REAL) */}
             <div className="mt-8 flex flex-col items-center gap-3">
               <p className="text-[11px] md:text-xs text-slate-400">
                 Stay ahead of every move. Drop your email and we&apos;ll send
@@ -53,21 +89,35 @@ export default function Page() {
 
               <form
                 className="flex flex-col sm:flex-row items-center gap-3"
-                onSubmit={(e) => e.preventDefault()}
+                onSubmit={handleSubscribe}
               >
                 <input
                   type="email"
                   required
                   placeholder="you@wallet.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-64 sm:w-80 rounded-full border border-sky-500/60 bg-black/50 px-4 py-2 text-xs md:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-400/70"
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center rounded-full bg-sky-500/90 px-5 py-2 text-xs md:text-sm font-semibold text-white shadow-[0_0_16px_rgba(56,189,248,0.8)] hover:bg-sky-400 hover:shadow-[0_0_22px_rgba(56,189,248,1)] transition"
+                  disabled={status === "loading"}
+                  className="inline-flex items-center rounded-full bg-sky-500/90 px-5 py-2 text-xs md:text-sm font-semibold text-white shadow-[0_0_16px_rgba(56,189,248,0.8)] hover:bg-sky-400 hover:shadow-[0_0_22px_rgba(56,189,248,1)] transition disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Notify Me
+                  {status === "loading" ? "Sending..." : "Notify Me"}
                 </button>
               </form>
+
+              {status === "success" && (
+                <p className="text-[11px] md:text-xs text-emerald-400 mt-1">
+                  {message}
+                </p>
+              )}
+              {status === "error" && (
+                <p className="text-[11px] md:text-xs text-red-400 mt-1">
+                  {message}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -123,7 +173,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ABOUT FOOTER (SIMPLE FOR NOW) */}
+      {/* SIMPLE ABOUT/FOOTER SECTION */}
       <section
         id="about"
         className="border-t border-slate-800 bg-black/80 px-6 md:px-16 py-10 text-[11px] md:text-xs text-slate-400"
