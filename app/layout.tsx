@@ -35,10 +35,6 @@ export const metadata: Metadata = {
   },
 };
 
-// -------------------------------
-//   ROOT LAYOUT WITH NAVBAR
-// -------------------------------
-
 export default function RootLayout({
   children,
 }: {
@@ -47,42 +43,40 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-[#030712] text-slate-100 antialiased">
-
-        {/* ---------------- NAVBAR ---------------- */}
-        <header className="w-full border-b border-white/5 bg-black/30 backdrop-blur-xl fixed top-0 left-0 z-50">
+        {/* GLOBAL NAVBAR */}
+        <header className="fixed top-0 left-0 w-full z-50 border-b border-white/5 bg-black/40 backdrop-blur-xl">
           <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-            {/* LOGO */}
-            <Link href="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 shadow-[0_0_12px_rgba(56,189,248,0.7)]"></div>
-              <span className="text-lg font-semibold tracking-wide">BlockBrief</span>
+            {/* LOGO + WORDMARK */}
+            <Link href="#top" className="flex items-center gap-2 select-none">
+              <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 shadow-[0_0_12px_rgba(56,189,248,0.7)]" />
+              <span className="text-[17px] font-semibold tracking-[0.22em] uppercase text-white drop-shadow-[0_0_6px_rgba(56,189,248,0.6)]">
+                BlockBrief
+              </span>
             </Link>
 
-            {/* LINKS */}
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-300">
-              <Link href="/daily-briefs" className="hover:text-sky-400 transition">
+            {/* NAV LINKS (SCROLLING) */}
+            <div className="hidden md:flex items-center gap-8 text-xs md:text-sm text-slate-300">
+              <Link href="#briefs" className="hover:text-sky-400 transition">
                 Daily Briefs
               </Link>
-              <Link href="/market-intel" className="hover:text-sky-400 transition">
-                Market Intel
-              </Link>
-              <Link href="/signals" className="hover:text-sky-400 transition">
+              <Link href="#signals" className="hover:text-sky-400 transition">
                 Signals
               </Link>
-              <Link href="/dashboards" className="hover:text-sky-400 transition">
-                Dashboards
-              </Link>
-              <Link href="/about" className="hover:text-sky-400 transition">
+              <Link href="#about" className="hover:text-sky-400 transition">
                 About
               </Link>
             </div>
 
-            {/* BUTTONS */}
-            <div className="flex items-center gap-4 text-sm">
-              <Link href="/login" className="text-slate-300 hover:text-sky-400 transition">
+            {/* RIGHT ACTIONS */}
+            <div className="flex items-center gap-4 text-xs md:text-sm">
+              <Link
+                href="#top"
+                className="text-slate-300 hover:text-sky-400 transition"
+              >
                 Login
               </Link>
               <Link
-                href="/join"
+                href="#top"
                 className="rounded-full bg-gradient-to-br from-sky-400 to-blue-600 px-4 py-1.5 text-white shadow-[0_0_12px_rgba(56,189,248,0.8)] hover:shadow-[0_0_20px_rgba(56,189,248,1)] transition"
               >
                 Join Free
@@ -91,10 +85,10 @@ export default function RootLayout({
           </nav>
         </header>
 
-        {/* SPACER so content doesn't hide under navbar */}
-        <div className="h-20"></div>
+        {/* spacer so content isn't hidden under fixed nav */}
+        <div className="h-20" />
 
-        {/* MAIN CONTENT */}
+        {/* PAGE CONTENT */}
         <main>{children}</main>
       </body>
     </html>

@@ -5,50 +5,13 @@ import { Shield, Zap, Database } from "lucide-react";
 export default function Page() {
   return (
     <main className="min-h-screen w-full bg-[#030712] text-white">
-      {/* NAVBAR */}
-      <header className="sticky top-0 z-30 flex items-center justify-between px-6 md:px-14 py-4 border-b border-white/5 bg-black/60 backdrop-blur-xl">
-        {/* Logo + BlockBrief wordmark */}
-        <div className="flex items-center gap-3 select-none">
-          <div className="h-8 w-8 rounded-2xl bg-sky-400/90 shadow-[0_0_14px_rgba(56,189,248,1)]" />
-          <span className="text-[17px] font-semibold tracking-[0.22em] uppercase text-white drop-shadow-[0_0_6px_rgba(56,189,248,0.8)]">
-            BlockBrief
-          </span>
-        </div>
-
-        {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-8 text-xs md:text-sm text-slate-200/80">
-          <a href="#briefs" className="hover:text-slate-50 transition-colors">
-            Daily Briefs
-          </a>
-          <a href="#market" className="hover:text-slate-50 transition-colors">
-            Market Intel
-          </a>
-          <a href="#signals" className="hover:text-slate-50 transition-colors">
-            Signals
-          </a>
-          <a href="#dashboards" className="hover:text-slate-50 transition-colors">
-            Dashboards
-          </a>
-          <a href="#about" className="hover:text-slate-50 transition-colors">
-            About
-          </a>
-        </nav>
-
-        {/* Right side actions */}
-        <div className="flex items-center gap-3">
-          <button className="hidden md:inline-flex text-xs md:text-sm text-slate-200/80 hover:text-slate-50">
-            Login
-          </button>
-          <button className="inline-flex items-center rounded-full bg-gradient-to-b from-[#38bdf8] to-[#0ea5e9] px-4 py-2 text-xs md:text-sm font-semibold text-white shadow-[0_0_20px_rgba(56,189,248,0.9)] hover:shadow-[0_0_26px_rgba(56,189,248,1)] transition">
-            Join Free
-          </button>
-        </div>
-      </header>
-
       {/* HERO SECTION */}
-      <section className="w-full px-6 pt-20 pb-32 bg-gradient-to-b from-[#0a1628] to-[#030712]">
+      <section
+        id="top"
+        className="w-full px-6 pt-16 md:pt-20 pb-32 bg-gradient-to-b from-[#0a1628] to-[#030712]"
+      >
         <div className="max-w-4xl mx-auto text-center relative">
-          {/* Glow background */}
+          {/* glow background */}
           <div className="pointer-events-none absolute inset-x-0 -top-40 h-80 bg-[radial-gradient(circle_at_top,#0ea5e9_0,transparent_60%)] opacity-40" />
           <div className="relative">
             {/* Mini title */}
@@ -59,14 +22,15 @@ export default function Page() {
             {/* Main Headline */}
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
               Crypto News, Alpha &amp; Insights <br />
-              from Builders <span className="text-sky-400">Worldwide</span>
+              from Builders{" "}
+              <span className="text-sky-400">Worldwide</span>
             </h1>
 
             {/* Subheadline */}
             <p className="mt-5 text-sm md:text-base text-slate-400 max-w-2xl mx-auto">
-              Where verified data meets fun, clarity, and culture. Daily briefs, market intel,
-              and on-chain signals curated from the best teams across every chain. No noise,
-              no drama—just builder-first signal.
+              Where verified data meets fun, clarity, and culture. Daily briefs,
+              market intel, and on-chain signals curated from the best teams
+              across every chain. No noise, no drama—just builder-first signal.
             </p>
 
             {/* CTA Buttons */}
@@ -83,7 +47,8 @@ export default function Page() {
             {/* EMAIL CAPTURE ROW */}
             <div className="mt-8 flex flex-col items-center gap-3">
               <p className="text-[11px] md:text-xs text-slate-400">
-                Stay ahead of every move. Drop your email and we&apos;ll send you the Daily Brief.
+                Stay ahead of every move. Drop your email and we&apos;ll send
+                you the Daily Brief.
               </p>
 
               <form
@@ -116,8 +81,9 @@ export default function Page() {
           </p>
 
           <p className="text-sm md:text-base text-slate-400 max-w-2xl mx-auto mt-2">
-            AI-powered crypto intelligence that&apos;s accurate, concise, and actually fun to read.
-            Every brief is weighted, checked, and ranked so you don&apos;t waste time.
+            AI-powered crypto intelligence that&apos;s accurate, concise, and
+            actually fun to read. Every brief is weighted, checked, and ranked
+            so you don&apos;t waste time.
           </p>
 
           {/* FEATURE CARDS */}
@@ -127,8 +93,8 @@ export default function Page() {
               <Shield className="w-7 h-7 text-sky-300 mb-3" />
               <h3 className="font-semibold mb-2">Builder-First Reporting</h3>
               <p className="text-sm text-slate-400">
-                News and insights sourced directly from founders, core contributors, and protocol
-                teams—not random influencers.
+                News and insights sourced directly from founders, core
+                contributors, and protocol teams—not random influencers.
               </p>
             </div>
 
@@ -137,21 +103,39 @@ export default function Page() {
               <Zap className="w-7 h-7 text-sky-300 mb-3" />
               <h3 className="font-semibold mb-2">Verified Alpha, Not Rumors</h3>
               <p className="text-sm text-slate-400">
-                Every claim is fact-checked, tied to on-chain data, liquidity flows, and reputable
-                research you can act on with conviction.
+                Every claim is fact-checked, tied to on-chain data, liquidity
+                flows, and reputable research you can act on with conviction.
               </p>
             </div>
 
             {/* Card 3 */}
             <div className="rounded-2xl border border-sky-500/40 bg-[#050b14] p-6 shadow-[0_0_25px_rgba(56,189,248,0.25)]">
               <Database className="w-7 h-7 text-sky-300 mb-3" />
-              <h3 className="font-semibold mb-2">Real Sources &amp; Chain Data</h3>
+              <h3 className="font-semibold mb-2">
+                Real Sources &amp; Chain Data
+              </h3>
               <p className="text-sm text-slate-400">
-                Each brief links out to the original governance posts, GitHub commits, threads, and
-                on-chain transactions.
+                Each brief links out to the original governance posts, GitHub
+                commits, threads, and on-chain transactions.
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ABOUT FOOTER (SIMPLE FOR NOW) */}
+      <section
+        id="about"
+        className="border-t border-slate-800 bg-black/80 px-6 md:px-16 py-10 text-[11px] md:text-xs text-slate-400"
+      >
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-center md:text-left">
+            © {new Date().getFullYear()} BlockBrief — Built for clarity, culture
+            &amp; fun.
+          </p>
+          <p className="text-center md:text-right text-slate-500">
+            Real builders. Real data. Real signal.
+          </p>
         </div>
       </section>
     </main>
