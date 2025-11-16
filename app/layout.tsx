@@ -46,37 +46,43 @@ export default function RootLayout({
         {/* GLOBAL NAVBAR */}
         <header className="fixed top-0 left-0 w-full z-50 border-b border-white/5 bg-black/40 backdrop-blur-xl">
           <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-            {/* LOGO + WORDMARK */}
-            <Link href="#top" className="flex items-center gap-2 select-none">
+            {/* Logo + wordmark */}
+            <Link href="/" className="flex items-center gap-2 select-none">
               <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 shadow-[0_0_12px_rgba(56,189,248,0.7)]" />
               <span className="text-[17px] font-semibold tracking-[0.22em] uppercase text-white drop-shadow-[0_0_6px_rgba(56,189,248,0.6)]">
                 BlockBrief
               </span>
             </Link>
 
-            {/* NAV LINKS (SCROLLING) */}
+            {/* Main nav links */}
             <div className="hidden md:flex items-center gap-8 text-xs md:text-sm text-slate-300">
-              <Link href="#briefs" className="hover:text-sky-400 transition">
+              <Link href="/daily-briefs" className="hover:text-sky-400 transition">
                 Daily Briefs
               </Link>
-              <Link href="#signals" className="hover:text-sky-400 transition">
+              <Link href="/signals" className="hover:text-sky-400 transition">
                 Signals
               </Link>
-              <Link href="#about" className="hover:text-sky-400 transition">
+              <Link href="/market-intel" className="hover:text-sky-400 transition">
+                Market Intel
+              </Link>
+              <Link href="/dashboards" className="hover:text-sky-400 transition">
+                Dashboards
+              </Link>
+              <Link href="/about" className="hover:text-sky-400 transition">
                 About
               </Link>
             </div>
 
-            {/* RIGHT ACTIONS */}
+            {/* Right actions */}
             <div className="flex items-center gap-4 text-xs md:text-sm">
               <Link
-                href="#top"
+                href="/login"
                 className="text-slate-300 hover:text-sky-400 transition"
               >
                 Login
               </Link>
               <Link
-                href="#top"
+                href="/join"
                 className="rounded-full bg-gradient-to-br from-sky-400 to-blue-600 px-4 py-1.5 text-white shadow-[0_0_12px_rgba(56,189,248,0.8)] hover:shadow-[0_0_20px_rgba(56,189,248,1)] transition"
               >
                 Join Free
@@ -85,10 +91,10 @@ export default function RootLayout({
           </nav>
         </header>
 
-        {/* spacer so content isn't hidden under fixed nav */}
+        {/* Spacer so content isn't hidden */}
         <div className="h-20" />
 
-        {/* PAGE CONTENT */}
+        {/* Page content */}
         <main>{children}</main>
       </body>
     </html>
