@@ -1,0 +1,4 @@
+python -m venv solana-bot  
+source solana-bot/bin/activate  # For macOS/Linux  
+solana-bot\Scripts\activate     # For Windows  
+pip install solana-py websocket-client  

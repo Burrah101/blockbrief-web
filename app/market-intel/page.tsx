@@ -9,7 +9,7 @@ export default function MarketIntelPage() {
       <div className="mx-auto max-w-6xl px-6 py-20">
 
         {/* HERO / INTRO */}
-        <section className="mb-16">
+        <section className="mb-10">
           <p className="text-[10px] md:text-xs tracking-[0.25em] text-sky-400 mb-3 uppercase">
             BLOCKBRIEF MARKET INTEL
           </p>
@@ -20,8 +20,12 @@ export default function MarketIntelPage() {
             Market structure, flows, and narratives — read through the lens of real builders,
             not just price candles. This page is where BlockBrief&apos;s future on-chain and
             market data will plug into clean, opinionated views of what actually matters.
-            For now, these tiles are static examples, but the layout is ready for live feeds.
           </p>
+        </section>
+
+        {/* LIVE MARKET INTEL PANEL */}
+        <section className="mb-16">
+          <LiveMarketIntel />
         </section>
 
         {/* TOP ROW: HIGH-LEVEL STRUCTURE */}
@@ -43,10 +47,10 @@ export default function MarketIntelPage() {
           />
         </section>
 
-        {/* MARKET STRUCTURE GRID */}
+        {/* MARKET STRUCTURE GRID (STATIC EXAMPLES) */}
         <section className="mb-16 space-y-6">
           <h2 className="text-lg md:text-xl font-semibold text-slate-50">
-            Market Structure Snapshots (Static Examples)
+            Market Structure Snapshots
           </h2>
           <p className="text-xs md:text-sm text-slate-400 max-w-3xl">
             These cards will eventually be powered by live prices, volumes, and volatility data. 
@@ -121,13 +125,106 @@ export default function MarketIntelPage() {
             </a>
           </div>
         </section>
-
       </div>
     </main>
   );
 }
 
-/* ---------- Subcomponents ---------- */
+/* ---------- LIVE MARKET INTEL COMPONENT ---------- */
+
+function LiveMarketIntel() {
+  const [loading, setLoading] = React.useState(true);
+  const [data, setData] = React.useState<any>(null);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    async function loadIntel() {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch("/api/market-intel");
+        const json = await res.json();
+        if (!json.ok) throw new Error("Bad response");
+        setData(json);
+      } catch (e) {
+        console.error(e);
+        setError("Unable to load live market intel right now.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadIntel();
+    const id = setInterval(loadIntel, 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="text-xs md:text-sm text-slate-400">
+        Loading live market intel…
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="text-xs md:text-sm text-red-400">
+        {error || "Unable to load intel."}
+      </div>
+    );
+  }
+
+  return (
+    <div className="border border-sky-500/30 rounded-2xl bg-[#030712]/60 shadow-[0_0_24px_rgba(56,189,248,0.25)] p-6">
+      <p className="text-[10px] md:text-xs text-sky-300 tracking-[0.25em] mb-4">
+        LIVE MARKET INTEL
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm md:text-base">
+        <IntelTile label="Total Market Cap" value={`$${data.marketCap}`} />
+        <IntelTile label="BTC Dominance" value={`${data.btcDominance}%`} />
+        <IntelTile
+          label="ETH Price (proxy gas)"
+          value={
+            data.ethPrice
+              ? `$${Number(data.ethPrice).toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}`
+              : "N/A"
+          }
+        />
+        <IntelTile label="Fear & Greed" value={data.fearGreed} />
+        <IntelTile
+          label="Top Gainers"
+          value={
+            Array.isArray(data.topGainers) && data.topGainers.length > 0
+              ? data.topGainers
+                  .map(
+                    (c: any) => `${c.name} (${c.change}%)`
+                  )
+                  .join(", ")
+              : "N/A"
+          }
+        />
+      </div>
+    </div>
+  );
+}
+
+function IntelTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-sky-500/20 bg-[#040b18]/80 p-4 shadow-[0_0_14px_rgba(15,23,42,0.9)]">
+      <p className="text-[11px] text-slate-400 uppercase tracking-wide mb-1">
+        {label}
+      </p>
+      <p className="text-md md:text-lg font-semibold text-slate-50 break-words">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+/* ---------- EXISTING COMPONENTS (UNCHANGED) ---------- */
 
 function TopCard({
   icon,
