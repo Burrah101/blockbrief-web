@@ -1,11 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Shield, Zap, Database } from "lucide-react";
 
+type MarketAsset = {
+  id: string;
+  label: string;
+  symbol: string;
+  price: number;
+  change24h: number;
+};
+
 export default function Page() {
+  // Email subscribe state
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle"
+  );
   const [message, setMessage] = useState("");
 
   async function handleSubscribe(e: React.FormEvent<HTMLFormElement>) {
@@ -24,7 +35,7 @@ export default function Page() {
 
       const data = await res.json();
 
-      if (!res.ok || !data.ok) {
+      if (!res.ok || !data?.ok) {
         setStatus("error");
         setMessage(data?.message || "Something went wrong.");
         return;
@@ -80,7 +91,7 @@ export default function Page() {
               </button>
             </div>
 
-            {/* EMAIL CAPTURE ROW (NOW REAL) */}
+            {/* EMAIL CAPTURE ROW (REAL) */}
             <div className="mt-8 flex flex-col items-center gap-3">
               <p className="text-[11px] md:text-xs text-slate-400">
                 Stay ahead of every move. Drop your email and we&apos;ll send
@@ -122,6 +133,9 @@ export default function Page() {
           </div>
         </div>
       </section>
+
+      {/* LIVE MARKET STRIP */}
+      <MarketStrip />
 
       {/* SIGNAL > NOISE SECTION */}
       <section id="signals" className="px-6 pb-32">
@@ -189,5 +203,122 @@ export default function Page() {
         </div>
       </section>
     </main>
+  );
+}
+
+/* ------------ LIVE MARKET STRIP COMPONENT ------------ */
+
+function MarketStrip() {
+  const [assets, setAssets] = useState<MarketAsset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchMarket() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const res = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true"
+        );
+        if (!res.ok) throw new Error("Failed to fetch market data");
+        const data = await res.json();
+
+        const next: MarketAsset[] = [
+          {
+            id: "bitcoin",
+            label: "Bitcoin",
+            symbol: "BTC",
+            price: data.bitcoin.usd,
+            change24h: data.bitcoin.usd_24h_change,
+          },
+          {
+            id: "ethereum",
+            label: "Ethereum",
+            symbol: "ETH",
+            price: data.ethereum.usd,
+            change24h: data.ethereum.usd_24h_change,
+          },
+          {
+            id: "solana",
+            label: "Solana",
+            symbol: "SOL",
+            price: data.solana.usd,
+            change24h: data.solana.usd_24h_change,
+          },
+        ];
+
+        setAssets(next);
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load market data right now.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMarket();
+
+    // Optional: auto-refresh every 60s
+    const id = setInterval(fetchMarket, 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <section className="px-6 pb-10 bg-[#030712] border-b border-slate-800/60">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-[11px] md:text-xs text-slate-400">
+            LIVE MARKET SNAPSHOT
+          </p>
+          {loading && (
+            <p className="text-[11px] md:text-xs text-slate-500">Updating…</p>
+          )}
+          {!loading && !error && (
+            <p className="text-[11px] md:text-xs text-slate-500">
+              Powered by CoinGecko · refreshed every ~60s
+            </p>
+          )}
+        </div>
+
+        {error && (
+          <p className="text-xs md:text-sm text-red-400 mb-4">{error}</p>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {assets.map((asset) => {
+            const isUp = asset.change24h >= 0;
+            const changeColor = isUp ? "text-emerald-400" : "text-red-400";
+
+            return (
+              <div
+                key={asset.id}
+                className="rounded-2xl border border-sky-500/30 bg-[#020617] px-4 py-3 shadow-[0_0_18px_rgba(56,189,248,0.25)] flex flex-col gap-1"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-slate-50">
+                    {asset.label}{" "}
+                    <span className="text-[11px] text-slate-400">
+                      ({asset.symbol})
+                    </span>
+                  </span>
+                </div>
+                <div className="flex items-end justify-between mt-1">
+                  <span className="text-lg font-semibold text-slate-50">
+                    ${asset.price.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                  <span className={`text-xs font-medium ${changeColor}`}>
+                    {asset.change24h.toFixed(2)}% 24h
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
