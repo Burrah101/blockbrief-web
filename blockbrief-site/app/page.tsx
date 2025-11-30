@@ -291,15 +291,15 @@ export default function Home() {
                 2. One Big Chart / Metric
               </p>
               <p className="text-slate-400">
-                Quick visual or number that actually matters
-                (dominance, fees, volume, stablecoin flows).
+                Quick visual or number that actually matters (dominance, fees,
+                volume, stablecoin flows).
               </p>
               <p className="mt-2 font-semibold text-slate-200">
                 3. Opportunity Radar
               </p>
               <p className="text-slate-400">
-                1–3 tokens / sectors worth watching — super short thesis +
-                risk note.
+                1–3 tokens / sectors worth watching — super short thesis + risk
+                note.
               </p>
             </div>
             <div className="space-y-1">
