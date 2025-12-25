@@ -1,14 +1,14 @@
 export default function AboutPage() {
     return (
-        <main className="min-h-screen p-6 max-w-2xl mx-auto flex flex-col justify-center">
-            <h1 className="text-3xl font-bold mb-4">About Blockbreif</h1>
-            <p className="mb-4 opacity-80">
+        <main className="px-4 py-20 text-center max-w-xl mx-auto">
+            <h1 className="text-3xl font-bold mb-6">About Blockbreif</h1>
+            <p className="mb-6 opacity-80 leading-relaxed">
                 Blockbreif was created to give traders and crypto investors one thing: time. We cut through noise
                 and deliver only the most critical market movements — fast, clear, and reliable.
             </p>
-            <p className="opacity-60 text-sm">
-                Built by Sandeep Mand · Contact: <a href="mailto:sansingh77@gmail.com" className="underline">sansingh77@gmail.com</a>
-            </p>
+            <div className="border-t border-white/20 pt-6 mt-6">
+                <p className="font-bold text-lg">Powered by Boost</p>
+            </div>
         </main>
     );
 }

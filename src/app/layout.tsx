@@ -18,7 +18,7 @@ export default function RootLayout({
           {children}
           <footer className="text-sm text-gray-500 text-center py-8 mt-auto">
             <p>© Blockbreif 2025 · Built for real-time crypto signal delivery</p>
-            <p>Contact: sansingh77@gmail.com</p>
+            <p className="font-bold mt-1">Powered by Boost</p>
             <div className="flex justify-center gap-4 mt-2">
               <a href="/" className="underline">Home</a>
               <a href="/brief" className="underline">Brief</a>
