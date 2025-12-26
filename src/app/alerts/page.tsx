@@ -46,7 +46,7 @@ export default function AlertsPage() {
 
                     {/* Fallback if no alerts */}
                     {prices && !Object.values(prices).some(d => Math.abs(d.usd_24h_change) >= ALERT_THRESHOLDS.fast) && (
-                        <p className="text-gray-500 italic">No active alerts. Market is stable.</p>
+                        <p className="text-sm opacity-60 italic mt-4">No active alerts. Market is stable for now. Check back during volatility.</p>
                     )}
                 </div>
             )}
