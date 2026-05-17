@@ -71,7 +71,7 @@ function generateFallbackInsight(
     whales?: WhaleMove[];
   }
 ): Insight {
-  const templates: Record<Segment, () => Partial<Insight>> = {
+  const templates: Partial<Record<Segment, () => Partial<Insight>>> = {
     market_pulse: () => {
       const btc = data.market?.find(m => m.symbol === 'btc');
       const eth = data.market?.find(m => m.symbol === 'eth');
@@ -131,7 +131,7 @@ function generateFallbackInsight(
     }),
   };
 
-  const template = templates[segment]();
+  const template = templates[segment]?.() || templates.context?.() || {};
   
   return {
     id: generateId(),
