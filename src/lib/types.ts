@@ -1,10 +1,14 @@
 // Core segment types for The Current
-export type Segment = 
-  | 'market_pulse' 
-  | 'capital_flow' 
-  | 'builder_activity' 
-  | 'context' 
-  | 'positive_signal';
+export type Segment =
+  | 'market_pulse'
+  | 'capital_flow'
+  | 'builder_activity'
+  | 'context'
+  | 'positive_signal'
+  | 'thailand_pulse'
+  | 'pattaya_signal'
+  | 'asia_flow'
+  | 'tourist_alert';
 
 export interface Insight {
   id: string;
@@ -18,6 +22,13 @@ export interface Insight {
   isSponsored: boolean;
   sponsorName?: string;
   sponsorLogo?: string;
+
+  // Optional regional intelligence fields
+  region?: 'global' | 'thailand' | 'pattaya' | 'asia';
+  audience?: 'traders' | 'tourists' | 'expats' | 'builders' | 'businesses' | 'general';
+  language?: 'en' | 'th' | 'zh' | 'ko' | 'hi' | 'ar' | 'ru' | 'de' | 'fr' | 'es';
+  signalStrength?: number; // 0–100
+  tags?: string[];
 }
 
 export interface MarketData {
@@ -54,6 +65,44 @@ export interface DefiData {
   tvl: number;
   change24h: number;
   chain: string;
+}
+
+export interface RegionalSignal {
+  id: string;
+  region: 'global' | 'thailand' | 'pattaya' | 'asia';
+  category:
+    | 'regulation'
+    | 'payments'
+    | 'exchange'
+    | 'tourism'
+    | 'adoption'
+    | 'event'
+    | 'scam_alert'
+    | 'business'
+    | 'builder'
+    | 'market';
+  title: string;
+  summary: string;
+  sourceUrl?: string;
+  sourceName?: string;
+  observedAt: Date;
+  confidence: number; // 0–100
+  tags: string[];
+}
+
+export interface LocalGuide {
+  id: string;
+  title: string;
+  slug: string;
+  region: 'thailand' | 'pattaya' | 'asia';
+  audience: 'tourists' | 'expats' | 'traders' | 'builders' | 'businesses' | 'general';
+  summary: string;
+  sections: {
+    heading: string;
+    body: string;
+  }[];
+  lastUpdated: Date;
+  tags: string[];
 }
 
 export interface Subscriber {
@@ -103,4 +152,8 @@ export const SEGMENT_CONFIG: Record<Segment, { icon: string; label: string; colo
   builder_activity: { icon: '🧑‍💻', label: 'Builder Activity', color: 'purple' },
   context: { icon: '🧠', label: 'Context Layer', color: 'amber' },
   positive_signal: { icon: '🌤️', label: 'Positive Signal', color: 'green' },
+  thailand_pulse: { icon: '🇹🇭', label: 'Thailand Pulse', color: 'red' },
+  pattaya_signal: { icon: '🌴', label: 'Pattaya Signal', color: 'cyan' },
+  asia_flow: { icon: '🌏', label: 'Asia Flow', color: 'indigo' },
+  tourist_alert: { icon: '🧭', label: 'Tourist Alert', color: 'orange' },
 };
