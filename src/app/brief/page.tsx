@@ -5,7 +5,9 @@ import {
   getDefiData,
   getWhaleActivity,
 } from "@/lib/fetchData";
+
 import { generateMarketPulse } from "@/lib/marketPulse";
+import { composeDailyBrief } from "@/lib/briefComposer";
 
 export const revalidate = 300;
 
@@ -24,16 +26,29 @@ export default async function DailyBriefPage() {
     whales,
   });
 
+  const brief = composeDailyBrief({
+    pulse,
+    marketCount: market.length,
+    builderCount: builders.length,
+    defiCount: defi.length,
+    whaleCount: whales.length,
+  });
+
   return (
     <main className="max-w-5xl mx-auto px-6 py-10">
+
       <div className="flex items-center justify-between mb-10">
         <div>
-          <h1 className="text-4xl font-bold">
-            Daily Brief
+          <div className="uppercase tracking-[0.3em] text-sm text-gray-500">
+            Today's Brief
+          </div>
+
+          <h1 className="text-4xl font-bold mt-2">
+            {brief.headline}
           </h1>
 
-          <p className="text-gray-400 mt-2">
-            Your one-minute crypto intelligence update.
+          <p className="text-gray-400 mt-3">
+            {brief.summary}
           </p>
         </div>
 
@@ -50,13 +65,13 @@ export default async function DailyBriefPage() {
           Market Pulse
         </div>
 
-        <div className="text-4xl font-bold mt-2">
-          {pulse.sentiment}
-        </div>
-
         <div className="text-6xl font-bold mt-4">
           {pulse.score}
           <span className="text-2xl text-gray-500"> /100</span>
+        </div>
+
+        <div className="text-2xl font-semibold mt-2">
+          {pulse.sentiment}
         </div>
 
         <p className="mt-6 text-gray-300 leading-7">
@@ -64,63 +79,71 @@ export default async function DailyBriefPage() {
         </p>
       </section>
 
-      <section className="grid md:grid-cols-2 gap-6">
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Builders
-          </h2>
+      <section className="rounded-xl border border-white/10 bg-white/5 p-8 mb-8">
+        <h2 className="text-2xl font-bold mb-6">
+          Key Points
+        </h2>
 
-          <p className="text-5xl font-bold">
-            {builders.length}
-          </p>
+        <ul className="space-y-4">
+          {brief.keyPoints.map((point) => (
+            <li
+              key={point}
+              className="flex items-start gap-3"
+            >
+              <span className="text-green-400 mt-1">
+                ●
+              </span>
 
-          <p className="text-gray-400 mt-2">
-            Builder updates detected.
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Market Coverage
-          </h2>
-
-          <p className="text-5xl font-bold">
-            {market.length}
-          </p>
-
-          <p className="text-gray-400 mt-2">
-            Assets analyzed.
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            DeFi
-          </h2>
-
-          <p className="text-5xl font-bold">
-            {defi.length}
-          </p>
-
-          <p className="text-gray-400 mt-2">
-            Protocol updates.
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Whale Activity
-          </h2>
-
-          <p className="text-5xl font-bold">
-            {whales.length}
-          </p>
-
-          <p className="text-gray-400 mt-2">
-            Significant events.
-          </p>
-        </div>
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
       </section>
+
+      <section className="grid md:grid-cols-2 gap-6">
+
+        <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+          <div className="text-gray-400">
+            Assets Analyzed
+          </div>
+
+          <div className="text-5xl font-bold mt-3">
+            {market.length}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+          <div className="text-gray-400">
+            Builder Updates
+          </div>
+
+          <div className="text-5xl font-bold mt-3">
+            {builders.length}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+          <div className="text-gray-400">
+            DeFi Updates
+          </div>
+
+          <div className="text-5xl font-bold mt-3">
+            {defi.length}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+          <div className="text-gray-400">
+            Whale Events
+          </div>
+
+          <div className="text-5xl font-bold mt-3">
+            {whales.length}
+          </div>
+        </div>
+
+      </section>
+
     </main>
   );
 }
