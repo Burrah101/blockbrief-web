@@ -55,35 +55,35 @@ export default async function HomePage() {
 
       {/* Quick Links */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        <Link 
-          href="/brief" 
+        <Link
+          href="/brief"
           className="block p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-center"
         >
           <span className="text-2xl mb-2 block">📊</span>
           <h3 className="font-bold text-sm">Live Brief</h3>
           <p className="text-xs text-gray-400">Real-time prices</p>
         </Link>
-        
-        <Link 
-          href="/alerts" 
+
+        <Link
+          href="/alerts"
           className="block p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-center"
         >
           <span className="text-2xl mb-2 block">🚨</span>
           <h3 className="font-bold text-sm">Alerts</h3>
           <p className="text-xs text-gray-400">Movement radar</p>
         </Link>
-        
-        <Link 
-          href="/agents" 
+
+        <Link
+          href="/agents"
           className="block p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-center"
         >
           <span className="text-2xl mb-2 block">🤖</span>
           <h3 className="font-bold text-sm">Agents</h3>
           <p className="text-xs text-gray-400">AI-powered tools</p>
         </Link>
-        
-        <Link 
-          href="/sponsored" 
+
+        <Link
+          href="/sponsored"
           className="block p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-center"
         >
           <span className="text-2xl mb-2 block">💼</span>
@@ -98,7 +98,7 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
           <div>
             <span className="text-2xl mb-2 block">🧠</span>
-            <h3 className="font-bold mb-1">Calm & Factual</h3>
+            <h3 className="font-bold mb-1">Calm &amp; Factual</h3>
             <p className="text-gray-400">No hype, no panic. Just signal.</p>
           </div>
           <div>
