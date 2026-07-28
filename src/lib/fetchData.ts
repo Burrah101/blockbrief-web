@@ -40,13 +40,23 @@ export async function getBuilderActivity(): Promise<BuilderActivity[] | null> {
       
       if (res.ok) {
         const data = await res.json();
+        const lastPush = new Date(data.pushed_at);
+        const hoursSincePush = Math.max(1,(Date.now()-lastPush.getTime())/(1000*60*60));
+
+        // Temporary activity score until commit-history API is added.
+        const activityScore = Math.round(
+          (data.stargazers_count || 0) / 100 +
+          (data.forks_count || 0) * 2 +
+          (24 / hoursSincePush)
+        );
+
         activities.push({
-          repo: repo,
-          commits: data.subscribers_count || 0,
-          contributors: data.watchers_count || 0,
+          repo,
+          commits: activityScore,
+          contributors: data.open_issues_count || 0,
           stars: data.stargazers_count || 0,
-          lastActivity: new Date(data.pushed_at),
-          description: data.description || '',
+          lastActivity: lastPush,
+          description: data.description || 'No description available.',
         });
       }
     }
