@@ -1,30 +1,24 @@
-import {
-  getMarketData,
-  getBuilderActivity,
-  getDefiData,
-  getWhaleActivity,
-} from "./fetchData";
-
+import { getCurrentData } from "./getCurrentData";
 import { calculateMarketScore } from "./marketScore";
 import { generateDailyBrief } from "./briefEngine";
 
 export async function getDailyBrief() {
-  const [market, builders, defi, whales] = await Promise.all([
-    getMarketData(),
-    getBuilderActivity(),
-    getDefiData(),
-    getWhaleActivity(),
-  ]);
+  const {
+    market,
+    builders,
+    defi,
+    whales,
+  } = await getCurrentData();
 
-  const score = calculateMarketScore({
+  const marketScore = calculateMarketScore({
     market,
     builders,
     defi,
     whales,
   });
 
-  const brief = generateDailyBrief(
-    score,
+  const dailyBrief = generateDailyBrief(
+    marketScore,
     market,
     builders,
     defi,
@@ -32,11 +26,11 @@ export async function getDailyBrief() {
   );
 
   return {
-    score,
-    brief,
     market,
     builders,
     defi,
     whales,
+    marketScore,
+    dailyBrief,
   };
 }
