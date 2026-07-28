@@ -95,12 +95,14 @@ export default async function HomePage() {
         </Link>
 
         <Link
-          href="/agents"
+          href="/builders"
           className="block p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-center"
         >
-          <span className="text-2xl mb-2 block">🤖</span>
-          <h3 className="font-bold text-sm">Agents</h3>
-          <p className="text-xs text-gray-400">AI-powered tools</p>
+          <span className="text-2xl mb-2 block">🛠</span>
+          <h3 className="font-bold text-sm">Builder Watch</h3>
+          <p className="text-xs text-gray-400">
+            Latest ecosystem development
+          </p>
         </Link>
 
         <Link
