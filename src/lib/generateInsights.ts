@@ -86,16 +86,29 @@ function generateFallbackInsight(
         watchNext: 'Key support and resistance levels for BTC and ETH in the coming week.',
       };
     },
-    capital_flow: () => ({
-      headline: 'Whale Activity Signals Accumulation Phase',
-      bullets: [
-        'Large holders moving assets off exchanges',
-        'Net outflow from centralized exchanges continues',
-        'Long-term holder supply reaching new highs',
-      ],
-      context: 'Capital flow analysis reveals a pattern consistent with accumulation. Major wallets are reducing exchange exposure, historically a bullish indicator for medium-term price action.',
-      watchNext: 'Exchange reserve levels and stablecoin inflows.',
-    }),
+    capital_flow: () => {
+      const biggest = [...(data.whales || [])].sort((a,b)=>b.usdValue-a.usdValue)[0];
+      return {
+        headline: biggest
+          ? `${biggest.symbol} Whale Transfer: $${Math.round(biggest.usdValue/1_000_000)}M`
+          : 'Capital Flow Update',
+        bullets: [
+          biggest
+            ? `${biggest.amount.toLocaleString()} ${biggest.symbol} moved`
+            : 'No whale transfers available',
+          biggest
+            ? `${biggest.from} → ${biggest.to}`
+            : 'Awaiting transfer data',
+          biggest
+            ? `Tracked value: $${biggest.usdValue.toLocaleString()}`
+            : 'Monitoring on-chain flows',
+        ],
+        context: biggest
+          ? `The largest tracked transfer this cycle moved approximately $${Math.round(biggest.usdValue/1_000_000)} million. Large transfers don't guarantee market direction, but they are useful signals to monitor alongside price and liquidity.`
+          : 'No significant whale activity detected.',
+        watchNext: 'Watch for repeated exchange inflows or outflows over the next cycle.',
+      };
+    },
     builder_activity: () => {
       const topRepo = data.builders?.[0];
       return {
