@@ -76,11 +76,11 @@ function generateFallbackInsight(
       const btc = data.market?.find(m => m.symbol === 'btc');
       const eth = data.market?.find(m => m.symbol === 'eth');
       return {
-        headline: 'Markets Holding Steady Amid Global Uncertainty',
+        headline: `BTC ${btc?.change24h && btc.change24h >= 0 ? 'Leads' : 'Slides'} as Bitcoin trades near $${btc?.price?.toLocaleString() || 'N/A'}`,
         bullets: [
           `Bitcoin trading at $${btc?.price?.toLocaleString() || 'N/A'} with ${btc?.change24h?.toFixed(1) || '0'}% daily change`,
           `Ethereum maintaining position at $${eth?.price?.toLocaleString() || 'N/A'}`,
-          'Overall market sentiment remains cautiously optimistic',
+          `${(data.market || []).filter(m => (m.change24h ?? 0) > 0).length} tracked assets are positive over 24h`,
         ],
         context: 'The crypto market continues to demonstrate resilience as major assets maintain their trading ranges. Institutional interest remains steady, with on-chain metrics suggesting accumulation patterns.',
         watchNext: 'Key support and resistance levels for BTC and ETH in the coming week.',
