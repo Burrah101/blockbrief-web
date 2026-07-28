@@ -89,37 +89,32 @@ function generateFallbackInsight(
     capital_flow: () => {
       const biggest = [...(data.whales || [])].sort((a,b)=>b.usdValue-a.usdValue)[0];
       return {
-        headline: biggest
-          ? `${biggest.symbol} Whale Transfer: $${Math.round(biggest.usdValue/1_000_000)}M`
-          : 'Capital Flow Update',
+        headline: biggest ? `${biggest.symbol} Whale Transfer: $${Math.round(biggest.usdValue/1000000)}M` : 'Capital Flow Update',
         bullets: [
-          biggest
-            ? `${biggest.amount.toLocaleString()} ${biggest.symbol} moved`
-            : 'No whale transfers available',
-          biggest
-            ? `${biggest.from} → ${biggest.to}`
-            : 'Awaiting transfer data',
-          biggest
-            ? `Tracked value: $${biggest.usdValue.toLocaleString()}`
-            : 'Monitoring on-chain flows',
+          biggest ? `${biggest.amount.toLocaleString()} ${biggest.symbol} moved` : 'No whale transfers available',
+          biggest ? `${biggest.from} → ${biggest.to}` : 'Awaiting transfer data',
+          biggest ? `Tracked value: $${biggest.usdValue.toLocaleString()}` : 'Monitoring on-chain flows',
         ],
         context: biggest
-          ? `The largest tracked transfer this cycle moved approximately $${Math.round(biggest.usdValue/1_000_000)} million. Large transfers don't guarantee market direction, but they are useful signals to monitor alongside price and liquidity.`
+          ? `Largest tracked transfer this cycle moved about $${Math.round(biggest.usdValue/1000000)} million.`
           : 'No significant whale activity detected.',
-        watchNext: 'Watch for repeated exchange inflows or outflows over the next cycle.',
+        watchNext: 'Watch for repeated exchange inflows or outflows.',
       };
     },
     builder_activity: () => {
-      const topRepo = data.builders?.[0];
+      const ranked = [...(data.builders || [])].sort((a,b)=>b.commits-a.commits);
+      const topRepo = ranked[0];
       return {
-        headline: 'Developer Activity Remains Strong Across Ecosystems',
+        headline: topRepo ? `Builder Leader: ${topRepo.repo.split('/').pop()}` : 'Builder Activity Update',
         bullets: [
-          topRepo ? `${topRepo.repo} showing ${topRepo.stars} stars and active development` : 'Major protocols shipping updates',
-          'Infrastructure improvements across L2 solutions',
-          'DeFi protocols enhancing security measures',
+          topRepo ? `Activity score: ${topRepo.commits}` : 'No repository activity available',
+          topRepo ? `${topRepo.stars.toLocaleString()} GitHub stars` : 'Repository metrics unavailable',
+          topRepo ? `Last update: ${topRepo.lastActivity.toLocaleString()}` : 'Awaiting latest push data',
         ],
-        context: 'The builder community continues to ship meaningful updates. Core infrastructure projects are seeing consistent commits, indicating healthy long-term development.',
-        watchNext: 'Upcoming protocol upgrades and mainnet launches.',
+        context: topRepo
+          ? `${topRepo.repo} currently leads the tracked repositories based on the live activity score.`
+          : 'Builder data is temporarily unavailable.',
+        watchNext: 'Watch for new releases, repository pushes, and sustained activity.',
       };
     },
     context: () => ({
