@@ -8,6 +8,7 @@ import {
 
 import { generateMarketPulse } from "@/lib/marketPulse";
 import { composeDailyBrief } from "@/lib/briefComposer";
+import { generateNarrative } from "@/lib/narrativeEngine";
 
 export const revalidate = 300;
 
@@ -34,9 +35,14 @@ export default async function DailyBriefPage() {
     whaleCount: whales.length,
   });
 
+  const narrative = generateNarrative({
+    pulse,
+    brief,
+  });
+
   return (
     <main className="max-w-5xl mx-auto px-6 py-10">
-
+      {/* Header */}
       <div className="flex items-center justify-between mb-10">
         <div>
           <div className="uppercase tracking-[0.3em] text-sm text-gray-500">
@@ -47,19 +53,20 @@ export default async function DailyBriefPage() {
             {brief.headline}
           </h1>
 
-          <p className="text-gray-400 mt-3">
+          <p className="text-gray-400 mt-3 max-w-3xl">
             {brief.summary}
           </p>
         </div>
 
         <Link
           href="/"
-          className="border border-white/10 rounded-lg px-4 py-2 hover:bg-white/5"
+          className="border border-white/10 rounded-lg px-4 py-2 hover:bg-white/5 transition"
         >
           Dashboard
         </Link>
       </div>
 
+      {/* Market Pulse */}
       <section className="rounded-xl border border-white/10 bg-white/5 p-8 mb-8">
         <div className="text-sm uppercase tracking-widest text-gray-500">
           Market Pulse
@@ -79,6 +86,7 @@ export default async function DailyBriefPage() {
         </p>
       </section>
 
+      {/* Key Points */}
       <section className="rounded-xl border border-white/10 bg-white/5 p-8 mb-8">
         <h2 className="text-2xl font-bold mb-6">
           Key Points
@@ -100,8 +108,26 @@ export default async function DailyBriefPage() {
         </ul>
       </section>
 
-      <section className="grid md:grid-cols-2 gap-6">
+      {/* Executive Narrative */}
+      <section className="rounded-xl border border-white/10 bg-white/5 p-8 mb-8">
+        <h2 className="text-2xl font-bold mb-6">
+          {narrative.title}
+        </h2>
 
+        <div className="space-y-6">
+          {narrative.body.map((paragraph) => (
+            <p
+              key={paragraph}
+              className="leading-8 text-gray-300"
+            >
+              {paragraph}
+            </p>
+          ))}
+        </div>
+      </section>
+
+      {/* Statistics */}
+      <section className="grid md:grid-cols-2 gap-6">
         <div className="rounded-xl border border-white/10 bg-white/5 p-6">
           <div className="text-gray-400">
             Assets Analyzed
@@ -141,9 +167,7 @@ export default async function DailyBriefPage() {
             {whales.length}
           </div>
         </div>
-
       </section>
-
     </main>
   );
 }
