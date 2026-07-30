@@ -1,42 +1,91 @@
 import { Headline } from "./types";
-import { XMLParser } from "fast-xml-parser";
+import { cleanText, absoluteUrl } from "./parsers/html";
+import * as cheerio from "cheerio";
+
+const NEWS_URL = "https://cardano.org/news";
 
 export async function getCardanoFoundationNews(): Promise<Headline[]> {
   try {
-    const response = await fetch(
-      "https://cardano.org/rss.xml",
-      {
-        cache: "no-store",
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`RSS request failed: ${response.status}`);
-    }
-
-    const xml = await response.text();
-
-    const parser = new XMLParser({
-      ignoreAttributes: false,
+    const response = await fetch(NEWS_URL, {
+      cache: "no-store",
+      headers: {
+        "User-Agent": "BlockBrief/1.0",
+      },
     });
 
-    const feed = parser.parse(xml);
+    if (!response.ok) {
+      throw new Error(`Cardano News request failed: ${response.status}`);
+    }
 
-    const items = feed?.rss?.channel?.item ?? [];
+    const html = await response.text();
 
-    return items.slice(0, 8).map((item: any) => ({
-      title: item.title ?? "",
-      summary:
-        item.description
-          ?.replace(/<[^>]+>/g, "")
-          ?.substring(0, 220) ?? "",
-      url: item.link ?? "",
-      source: "Cardano",
-      publishedAt: item.pubDate ?? "",
-      importance: 90,
-    }));
+    const $ = cheerio.load(html);
+
+    const headlines: Headline[] = [];
+
+    // Try several layouts. Cardano occasionally changes their site.
+    const selectors = [
+      "article",
+      ".news-card",
+      ".post-card",
+      ".card",
+      "[class*=news]",
+      "[class*=article]",
+    ];
+
+    for (const selector of selectors) {
+      const cards = $(selector);
+
+      if (!cards.length) continue;
+
+      cards.each((_, element) => {
+        if (headlines.length >= 8) return false;
+
+        const title =
+          cleanText(
+            $(element)
+              .find("h1,h2,h3,h4,a")
+              .first()
+              .text()
+          ) || "";
+
+        if (!title || title.length < 8) return;
+
+        const href =
+          $(element).find("a").first().attr("href") ?? "";
+
+        const summary = cleanText(
+          $(element)
+            .find("p")
+            .first()
+            .text()
+        );
+
+        const date =
+          $(element).find("time").attr("datetime") ??
+          $(element).find("time").text() ??
+          "";
+
+        headlines.push({
+          title,
+          summary,
+          url: absoluteUrl(NEWS_URL, href),
+          source: "Cardano",
+          publishedAt: date,
+          importance: 90,
+        });
+      });
+
+      if (headlines.length) break;
+    }
+
+    console.log(
+      `Cardano: collected ${headlines.length} headlines`
+    );
+
+    return headlines;
   } catch (error) {
-    console.error("Cardano RSS failed:", error);
+    console.error("Cardano parser failed:", error);
     return [];
   }
 }
