@@ -8,49 +8,73 @@ interface EmailCaptureProps {
   onSubscribe?: (email: string, referralCode?: string) => void;
 }
 
-export default function EmailCapture({ variant = 'inline', onSubscribe }: EmailCaptureProps) {
+export default function EmailCapture({
+  variant = 'inline',
+  onSubscribe,
+}: EmailCaptureProps) {
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle');
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !email.includes('@')) {
       setStatus('error');
-      setMessage('Please enter a valid email address');
+      setMessage('Please enter a valid email address.');
       return;
     }
 
     setStatus('loading');
+    setMessage('');
 
     try {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+        }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        const data = await res.json();
         setStatus('success');
-        setMessage('Welcome to BlockBrief! Check your inbox.');
+        setMessage(data.message ?? 'Welcome to BlockBrief!');
+
         if (onSubscribe) {
           onSubscribe(email, data.referralCode);
         }
+
         setEmail('');
-      } else {
-        throw new Error('Subscription failed');
+        return;
       }
-    } catch {
+
+      if (res.status === 409) {
+        setStatus('error');
+        setMessage("You're already subscribed.");
+        return;
+      }
+
       setStatus('error');
-      setMessage('Something went wrong. Please try again.');
+      setMessage(data.error ?? 'Unable to subscribe.');
+    } catch (error) {
+      console.error(error);
+
+      setStatus('error');
+      setMessage('Unable to reach the server.');
     }
   };
 
   const baseClasses = {
     inline: 'bg-white/5 rounded-lg p-4',
-    hero: 'bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl p-8 border border-white/10',
+    hero:
+      'bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl p-8 border border-white/10',
     footer: 'bg-transparent',
   };
 
@@ -58,16 +82,27 @@ export default function EmailCapture({ variant = 'inline', onSubscribe }: EmailC
     <div className={baseClasses[variant]}>
       {variant === 'hero' && (
         <div className="text-center mb-6">
-          <h3 className="text-xl font-bold mb-2">Stay Oriented, Not Addicted</h3>
+          <h3 className="text-xl font-bold mb-2">
+            Stay Oriented, Not Addicted
+          </h3>
+
           <p className="text-gray-400 text-sm">
-            Get the daily digest of calm, factual crypto intelligence. Free forever.
+            Get the daily digest of calm, factual crypto intelligence. Free
+            forever.
           </p>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col sm:flex-row gap-3"
+      >
         <div className="relative flex-1">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+          <Mail
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+            size={18}
+          />
+
           <input
             type="email"
             value={email}
@@ -77,27 +112,47 @@ export default function EmailCapture({ variant = 'inline', onSubscribe }: EmailC
             className="w-full pl-10 pr-4 py-3 bg-black border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-white/40 disabled:opacity-50"
           />
         </div>
-        
+
         <button
           type="submit"
           disabled={status === 'loading' || status === 'success'}
           className="px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {status === 'loading' && <Loader2 size={18} className="animate-spin" />}
-          {status === 'success' && <CheckCircle size={18} />}
-          {status === 'loading' ? 'Subscribing...' : status === 'success' ? 'Subscribed!' : 'Subscribe Free'}
+          {status === 'loading' && (
+            <Loader2
+              size={18}
+              className="animate-spin"
+            />
+          )}
+
+          {status === 'success' && (
+            <CheckCircle size={18} />
+          )}
+
+          {status === 'loading'
+            ? 'Subscribing...'
+            : status === 'success'
+              ? 'Subscribed!'
+              : 'Subscribe Free'}
         </button>
       </form>
 
       {message && (
-        <p className={`mt-3 text-sm ${status === 'error' ? 'text-red-400' : 'text-green-400'}`}>
+        <p
+          className={`mt-3 text-sm ${
+            status === 'error'
+              ? 'text-red-400'
+              : 'text-green-400'
+          }`}
+        >
           {message}
         </p>
       )}
 
       {variant !== 'footer' && (
         <p className="text-xs text-gray-500 mt-3 text-center">
-          Join 10,000+ builders and investors. No spam, unsubscribe anytime.
+          Join the first generation of BlockBrief readers. No spam.
+          Unsubscribe anytime.
         </p>
       )}
     </div>

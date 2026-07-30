@@ -7,7 +7,7 @@ import {
   getDefiData,
   getWhaleActivity,
 } from '@/lib/fetchData';
-import { generateInsights } from '@/lib/generateInsights';
+import { generateAllInsights } from '@/lib/generateInsights';
 import { saveBrief } from '@/lib/archive';
 import { generateMarketPulse } from '@/lib/marketPulse';
 import Link from 'next/link';
@@ -22,7 +22,7 @@ async function getPageData() {
     getWhaleActivity(),
   ]);
 
-  const insights = await generateInsights({
+  const insights = await generateAllInsights({
     market: market || undefined,
     builders: builders || undefined,
     defi: defi || undefined,
