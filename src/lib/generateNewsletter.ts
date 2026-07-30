@@ -9,31 +9,41 @@ export interface Newsletter {
 }
 
 export async function generateNewsletter(): Promise<Newsletter> {
-
   const sources = await getDailySources();
 
   console.log("BlockBrief Sources", sources);
 
-  // Later we'll replace this with:
-  // briefEngine()
-  // getCurrentData()
-  // narrativeEngine()
-  // AI summary
+  const rankedHeadlines = sources.ecosystems
+    .flatMap((ecosystem) =>
+      ecosystem.headlines.map((headline) => ({
+        ...headline,
+        ecosystem: ecosystem.ecosystem,
+      }))
+    )
+    .sort((a, b) => b.importance - a.importance)
+    .slice(0, 10);
+
+  const summary =
+    rankedHeadlines.length > 0
+      ? `Today's crypto builder activity is led by ${
+          rankedHeadlines[0].ecosystem
+        }. ${sources.ecosystems
+          .filter((e) => e.headlines.length > 0)
+          .map((e) => `${e.ecosystem} (${e.headlines.length})`)
+          .join(", ")} produced notable updates today.`
+      : "No significant ecosystem updates were collected today.";
 
   return {
-
     title: "BlockBrief Daily",
 
     date: new Date().toLocaleDateString(),
 
     marketPulse: "Neutral",
 
-    summary:
-      "Markets continue consolidating while builder activity remains healthy. Bitcoin is holding support while capital slowly rotates into infrastructure projects.",
+    summary,
 
-    headlines: sources.ecosystems.flatMap((ecosystem) =>
-      ecosystem.headlines.map((headline) => headline.title)
+    headlines: rankedHeadlines.map(
+      (headline) => `[${headline.ecosystem}] ${headline.title}`
     ),
-
   };
 }
