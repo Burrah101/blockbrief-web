@@ -1,31 +1,40 @@
-import { getCardanoNews } from "./cardano";
+import { NewsletterData } from "./types";
+
+import { getCardanoFoundationNews } from "./cardanoFoundation";
 import { getEthereumNews } from "./ethereum";
 import { getMonadNews } from "./monad";
-import { getBuilderOpportunities } from "./builder";
+
+import { getBuilderOpportunities } from "./builderOpportunities";
 import { getMacroEvents } from "./macro";
 
-export async function getDailySources() {
+export async function getDailySources(): Promise<NewsletterData> {
   const [
     cardano,
     ethereum,
     monad,
     builderOpportunities,
-    macro
+    macro,
   ] = await Promise.all([
-    getCardanoNews(),
+    getCardanoFoundationNews(),
     getEthereumNews(),
     getMonadNews(),
     getBuilderOpportunities(),
-    getMacroEvents()
+    getMacroEvents(),
   ]);
 
   return {
+    generatedAt: new Date().toISOString(),
+
+    marketPulse: "Neutral",
+
     ecosystems: [
       cardano,
       ethereum,
-      monad
+      monad,
     ],
+
     builderOpportunities,
-    macro
+
+    macro,
   };
 }

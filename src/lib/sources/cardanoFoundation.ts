@@ -1,10 +1,10 @@
-import { Headline } from "./types";
+import { EcosystemNews, Headline } from "./types";
 import { cleanText, absoluteUrl } from "./parsers/html";
 import * as cheerio from "cheerio";
 
 const NEWS_URL = "https://cardano.org/news";
 
-export async function getCardanoFoundationNews(): Promise<Headline[]> {
+export async function getCardanoFoundationNews(): Promise<EcosystemNews> {
   try {
     const response = await fetch(NEWS_URL, {
       cache: "no-store",
@@ -23,7 +23,6 @@ export async function getCardanoFoundationNews(): Promise<Headline[]> {
 
     const headlines: Headline[] = [];
 
-    // Try several layouts. Cardano occasionally changes their site.
     const selectors = [
       "article",
       ".news-card",
@@ -70,7 +69,7 @@ export async function getCardanoFoundationNews(): Promise<Headline[]> {
           title,
           summary,
           url: absoluteUrl(NEWS_URL, href),
-          source: "Cardano",
+          source: "Cardano Foundation",
           publishedAt: date,
           importance: 90,
         });
@@ -79,13 +78,29 @@ export async function getCardanoFoundationNews(): Promise<Headline[]> {
       if (headlines.length) break;
     }
 
-    console.log(
-      `Cardano: collected ${headlines.length} headlines`
-    );
+    console.log(`Cardano: collected ${headlines.length} headlines`);
 
-    return headlines;
+    return {
+      ecosystem: "Cardano",
+      score: headlines.length ? 90 : 0,
+      summary:
+        headlines.length > 0
+          ? "Cardano builder activity remains steady with continued infrastructure development."
+          : "No recent Cardano updates.",
+      headlines,
+      builderUpdates: [],
+      opportunities: [],
+    };
   } catch (error) {
     console.error("Cardano parser failed:", error);
-    return [];
+
+    return {
+      ecosystem: "Cardano",
+      score: 0,
+      summary: "Unable to load Cardano news.",
+      headlines: [],
+      builderUpdates: [],
+      opportunities: [],
+    };
   }
 }
