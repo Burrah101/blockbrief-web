@@ -1,7 +1,7 @@
 'use client';
 
 import { formatDistanceToNow } from 'date-fns';
-import { Share2, ExternalLink } from 'lucide-react';
+import { Share2 } from 'lucide-react';
 import type { Insight } from '@/lib/types';
 import { SEGMENT_CONFIG } from '@/lib/types';
 
@@ -11,14 +11,24 @@ interface InsightCardProps {
   onShare?: (insight: Insight) => void;
 }
 
-export default function InsightCard({ insight, featured = false, onShare }: InsightCardProps) {
-  const config = SEGMENT_CONFIG[insight.segment];
-  
+export default function InsightCard({
+  insight,
+  featured = false,
+  onShare,
+}: InsightCardProps) {
+
+  // ✅ SAFE CONFIG (prevents crash)
+  const config =
+    SEGMENT_CONFIG[insight.segment] || {
+      icon: "⚡",
+      label: "Insight",
+      color: "gray",
+    };
+
   const handleShare = () => {
     if (onShare) {
       onShare(insight);
     } else {
-      // Default share behavior
       const text = `${insight.headline}\n\nvia BlockBrief - Signal. No noise.`;
       const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
       window.open(url, '_blank');
@@ -26,11 +36,11 @@ export default function InsightCard({ insight, featured = false, onShare }: Insi
   };
 
   return (
-    <div 
+    <div
       className={`
         relative rounded-lg border transition-all duration-300
-        ${featured 
-          ? 'bg-gradient-to-br from-slate-900 to-slate-800 border-white/20 p-6' 
+        ${featured
+          ? 'bg-gradient-to-br from-slate-900 to-slate-800 border-white/20 p-6'
           : 'bg-slate-900/50 border-white/10 p-4 hover:border-white/20'
         }
         ${insight.isSponsored ? 'border-amber-500/30' : ''}
@@ -47,11 +57,19 @@ export default function InsightCard({ insight, featured = false, onShare }: Insi
       {/* Segment Badge */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">{config.icon}</span>
-        <span className={`text-xs font-medium uppercase tracking-wider text-${config.color}-400`}>
+
+        <span
+          className={`text-xs font-medium uppercase tracking-wider text-${config.color}-400`}
+        >
           {config.label}
         </span>
+
         <span className="text-xs text-gray-500 ml-auto">
-          {formatDistanceToNow(new Date(insight.timestamp), { addSuffix: true })}
+          {insight.timestamp
+            ? formatDistanceToNow(new Date(insight.timestamp), {
+                addSuffix: true,
+              })
+            : 'now'}
         </span>
       </div>
 
@@ -62,8 +80,11 @@ export default function InsightCard({ insight, featured = false, onShare }: Insi
 
       {/* Bullets */}
       <ul className="space-y-2 mb-4">
-        {insight.bullets.map((bullet, i) => (
-          <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+        {insight.bullets?.map((bullet, i) => (
+          <li
+            key={i}
+            className="flex items-start gap-2 text-sm text-gray-300"
+          >
             <span className="text-white/40 mt-1">•</span>
             <span>{bullet}</span>
           </li>
@@ -71,29 +92,34 @@ export default function InsightCard({ insight, featured = false, onShare }: Insi
       </ul>
 
       {/* Context (featured only) */}
-      {featured && (
+      {featured && insight.context && (
         <p className="text-sm text-gray-400 mb-4 leading-relaxed">
           {insight.context}
         </p>
       )}
 
       {/* Watch Next */}
-      <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
-        <span className="font-medium text-gray-400">Watch next:</span>
-        <span>{insight.watchNext}</span>
-      </div>
+      {insight.watchNext && (
+        <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
+          <span className="font-medium text-gray-400">Watch next:</span>
+          <span>{insight.watchNext}</span>
+        </div>
+      )}
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-3 border-t border-white/10">
-        <div className="flex items-center gap-2 text-xs text-gray-500">
-          {insight.sources.map((source, i) => (
-            <span key={i} className="bg-white/5 px-2 py-0.5 rounded">
+        <div className="flex items-center gap-2 text-xs text-gray-500 flex-wrap">
+          {insight.sources?.map((source, i) => (
+            <span
+              key={i}
+              className="bg-white/5 px-2 py-0.5 rounded"
+            >
               {source}
             </span>
           ))}
         </div>
-        
-        <button 
+
+        <button
           onClick={handleShare}
           className="flex items-center gap-1 text-xs text-gray-400 hover:text-white transition-colors"
         >
