@@ -13,21 +13,36 @@ export async function GET() {
         summary: newsletter.summary,
         market_pulse: newsletter.marketPulse,
         headlines: newsletter.headlines,
+
+        // NEW
+        ecosystems: newsletter.ecosystems,
+        builder_opportunities: newsletter.builderOpportunities,
+        macro: newsletter.macro,
+
         status: "draft",
       })
       .select()
       .single();
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     return NextResponse.json({
-      ...newsletter,
       id: data.id,
       status: data.status,
-    });
 
+      title: newsletter.title,
+      date: newsletter.date,
+
+      marketPulse: newsletter.marketPulse,
+      summary: newsletter.summary,
+
+      headlines: newsletter.headlines,
+
+      // NEW
+      ecosystems: newsletter.ecosystems,
+      builderOpportunities: newsletter.builderOpportunities,
+      macro: newsletter.macro,
+    });
   } catch (err) {
     console.error(err);
 

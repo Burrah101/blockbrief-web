@@ -14,11 +14,10 @@ export async function getCardanoFoundationNews(): Promise<EcosystemNews> {
     });
 
     if (!response.ok) {
-      throw new Error(`Cardano News request failed: ${response.status}`);
+      throw new Error(`Cardano request failed: ${response.status}`);
     }
 
     const html = await response.text();
-
     const $ = cheerio.load(html);
 
     const headlines: Headline[] = [];
@@ -40,18 +39,22 @@ export async function getCardanoFoundationNews(): Promise<EcosystemNews> {
       cards.each((_, element) => {
         if (headlines.length >= 8) return false;
 
-        const title =
-          cleanText(
-            $(element)
-              .find("h1,h2,h3,h4,a")
-              .first()
-              .text()
-          ) || "";
+        const title = cleanText(
+          $(element)
+            .find("h1,h2,h3,h4,a")
+            .first()
+            .text()
+        );
 
         if (!title || title.length < 8) return;
 
+        if (headlines.some((h) => h.title === title)) return;
+
         const href =
-          $(element).find("a").first().attr("href") ?? "";
+          $(element)
+            .find("a")
+            .first()
+            .attr("href") ?? "";
 
         const summary = cleanText(
           $(element)
@@ -60,17 +63,16 @@ export async function getCardanoFoundationNews(): Promise<EcosystemNews> {
             .text()
         );
 
-        const date =
-          $(element).find("time").attr("datetime") ??
-          $(element).find("time").text() ??
-          "";
+        const publishedAt =
+          $(element).find("time").attr("datetime") ||
+          cleanText($(element).find("time").text());
 
         headlines.push({
           title,
           summary,
           url: absoluteUrl(NEWS_URL, href),
-          source: "Cardano Foundation",
-          publishedAt: date,
+          source: "Cardano",
+          publishedAt,
           importance: 90,
         });
       });
@@ -85,7 +87,8 @@ export async function getCardanoFoundationNews(): Promise<EcosystemNews> {
       score: headlines.length ? 90 : 0,
       summary:
         headlines.length > 0
-          ? "Cardano builder activity remains steady with continued infrastructure development."
+          ? headlines[0].summary ||
+            `Collected ${headlines.length} Cardano updates.`
           : "No recent Cardano updates.",
       headlines,
       builderUpdates: [],

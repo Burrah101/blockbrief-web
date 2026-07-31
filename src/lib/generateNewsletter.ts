@@ -3,9 +3,15 @@ import { getDailySources } from "./sources";
 export interface Newsletter {
   title: string;
   date: string;
+
   marketPulse: string;
   summary: string;
+
   headlines: string[];
+
+  ecosystems: any[];
+  builderOpportunities: any[];
+  macro: any[];
 }
 
 export async function generateNewsletter(): Promise<Newsletter> {
@@ -38,12 +44,18 @@ export async function generateNewsletter(): Promise<Newsletter> {
 
     date: new Date().toLocaleDateString(),
 
-    marketPulse: "Neutral",
+    marketPulse: sources.marketPulse,
 
     summary,
 
     headlines: rankedHeadlines.map(
       (headline) => `[${headline.ecosystem}] ${headline.title}`
     ),
+
+    ecosystems: sources.ecosystems,
+
+    builderOpportunities: sources.builderOpportunities,
+
+    macro: sources.macro,
   };
 }
