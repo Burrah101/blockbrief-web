@@ -1,20 +1,33 @@
-// lib/fetchData.ts
+// src/lib/fetchData.ts
 
 // =============================
-// MARKET DATA (basic placeholder)
+// MARKET DATA (FIXED STRUCTURE)
 // =============================
 export async function getMarketData() {
   try {
-    return {
-      marketPulse: "Neutral",
-      score: 67,
-    };
+    const res = await fetch(
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum",
+      {
+        cache: "no-store", // prevents Vercel cache crash
+      }
+    );
+
+    const data = await res.json();
+
+    return data.map((coin: any) => ({
+      symbol: coin.symbol,
+      price: coin.current_price,
+      change24h: coin.price_change_percentage_24h,
+    }));
+
   } catch (err) {
     console.error("Market data error:", err);
-    return {
-      marketPulse: "Neutral",
-      score: 50,
-    };
+
+    // SAFE fallback (prevents crash)
+    return [
+      { symbol: "btc", price: 0, change24h: 0 },
+      { symbol: "eth", price: 0, change24h: 0 },
+    ];
   }
 }
 
@@ -23,20 +36,10 @@ export async function getMarketData() {
 // =============================
 export async function getBuilderActivity() {
   try {
-    // Placeholder — replace later with GitHub / ecosystem feeds
     return [
-      {
-        ecosystem: "Cardano",
-        commits: 7,
-      },
-      {
-        ecosystem: "Ethereum",
-        commits: 5,
-      },
-      {
-        ecosystem: "Monad",
-        commits: 1,
-      },
+      { ecosystem: "Cardano", commits: 7 },
+      { ecosystem: "Ethereum", commits: 5 },
+      { ecosystem: "Monad", commits: 1 },
     ];
   } catch (err) {
     console.error("Builder activity error:", err);
@@ -45,17 +48,17 @@ export async function getBuilderActivity() {
 }
 
 // =============================
-// DEFI DATA (FIXED FOR VERCEL)
+// DEFI DATA (VERCEL SAFE)
 // =============================
 export async function getDefiData() {
   try {
     const res = await fetch("https://api.llama.fi/protocols", {
-      cache: "no-store", // 🚨 CRITICAL FIX (prevents 2MB cache crash)
+      cache: "no-store", // CRITICAL
     });
 
     const data = await res.json();
 
-    // 🚨 LIMIT SIZE (prevents memory + deployment issues)
+    // limit payload size
     const trimmed = data.slice(0, 50);
 
     return trimmed.map((protocol: any) => ({
@@ -64,6 +67,7 @@ export async function getDefiData() {
       chain: protocol.chain,
       category: protocol.category,
     }));
+
   } catch (err) {
     console.error("DeFi fetch failed:", err);
     return [];
@@ -71,21 +75,13 @@ export async function getDefiData() {
 }
 
 // =============================
-// WHALE ACTIVITY (SIMPLE MOCK)
+// WHALE ACTIVITY
 // =============================
 export async function getWhaleActivity() {
   try {
     return [
-      {
-        asset: "BTC",
-        type: "large transfer",
-        volume: "high",
-      },
-      {
-        asset: "ETH",
-        type: "large transfer",
-        volume: "high",
-      },
+      { symbol: "BTC", type: "large transfer", volume: "high" },
+      { symbol: "ETH", type: "large transfer", volume: "high" },
     ];
   } catch (err) {
     console.error("Whale activity error:", err);
@@ -94,11 +90,10 @@ export async function getWhaleActivity() {
 }
 
 // =============================
-// MACRO DATA (RSS SAFE)
+// MACRO DATA (CLEAN + SAFE)
 // =============================
 export async function getMacroData() {
   try {
-    // Keep only working sources (IMF removed — causes 403)
     return [
       {
         title: "Federal Reserve issues FOMC statement",
